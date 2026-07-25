@@ -26,11 +26,10 @@ Running `/logs/import` multiple times can create duplicate stored log entries.
 ### Next Roadmap
 - Add duplicate prevention for imported logs
 - Add log hash/checksum field
-- Add clear logs route for development testing
 - Add severity filtering
 - Add Slack/email alerts for critical logs
 - Expand FastAPI dashboard
-- Add README examples for sample log input/output
+- Move detailed documentation into the `docs/` directory
 
 ## Features / 機能
 | EN | 日本語 |
@@ -112,6 +111,20 @@ http://127.0.0.1:8000/docs
 | GET | /logs/live | Returns the latest log entries from the log file |
 | DELETE | /logs/stored | Clears stored log entries from PostgreSQL |
 
+## API Examples / API使用例
+
+Import logs:
+```bash
+curl -X POST http://127.0.0.1:8000/logs/import
+```
+
+View stored logs:
+```bash
+curl http://127.0.0.1:8000/logs/stored
+```
+
+View severity summary
+
 ## CI/CD
 
 This project uses GitHub Actions to run automated checks on every push and pull request.
@@ -148,14 +161,15 @@ log-intelligence-analyzer/
     └── server.log
 ```
 
-## Learning Outcomes / 学習成果
+## Documentation
 
-- Modular backend architecture
-- Separation of concerns
-- CLI application development
-- Log parsing and analytics
-- Report generation workflows
-- Debugging and error handling
+Detailed project documentation is available in the [`docs/`](docs/) directory.
+
+| Document | Description |
+|----------|-------------|
+| [API Examples](docs/api-examples.md) | Example requests and responses for each API endpoint. |
+| Architecture | *(Coming soon)* |
+| Development Notes | *(Coming soon)* |
 
 ## Future Improvements / 今後の改善点
 
