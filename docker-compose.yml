@@ -1,7 +1,7 @@
 services:
   api:
     build: .
-    container_name: log-intelligence-api
+    container_name: logsense-api
     ports:
       - "8000:8000"
     environment:
@@ -13,7 +13,7 @@ services:
 
   db:
     image: postgres:16
-    container_name: log-intelligence-db
+    container_name: logsense-db
     environment:
       POSTGRES_USER: log_user
       POSTGRES_PASSWORD: log_password

@@ -1,6 +1,6 @@
 # API Examples
 
-Example requests for interacting with the Log Intelligence Analyzer API.
+Example requests for interacting with the LogSense API.
 
 > **Note**
 >
@@ -95,15 +95,3 @@ Deletes all stored log entries from PostgreSQL.
 ```bash
 curl -X DELETE http://127.0.0.1:8000/logs/stored
 ```
-
----
-
-## Future Improvements
-
-As the project evolves, this document will include:
-
-- Example JSON request bodies
-- Example JSON responses
-- Error response examples
-- HTTP status codes
-- Authentication examples (if implemented)

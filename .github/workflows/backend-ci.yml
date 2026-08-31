@@ -36,4 +36,4 @@ jobs:
 
       - name: Build Docker image if Dockerfile exists
         run: |
-          if [ -f Dockerfile ]; then docker build -t log-intelligence-analyzer .; else echo "No Dockerfile found"; fi
+          if [ -f Dockerfile ]; then docker build -t logsense .; else echo "No Dockerfile found"; fi

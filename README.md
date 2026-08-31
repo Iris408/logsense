@@ -1,66 +1,84 @@
-![Backend CI](https://github.com/Iris408/log-intelligence-analyzer/actions/workflows/backend-ci.yml/badge.svg)
-![Docker CI](https://github.com/Iris408/inventory-management-system/actions/workflows/docker-ci.yml/badge.svg)
+![Backend CI](https://github.com/Iris408/logsense/actions/workflows/backend-ci.yml/badge.svg)
+![Docker CI](https://github.com/Iris408/logsense/actions/workflows/docker-ci.yml/badge.svg)
 
-# Log Intelligence Analyzer / ログインテリジェンスアナライザー
+# LogSense / ログセンス
 
-Python-based log analysis and monitoring tool designed to parse, analyse, and report operational server logs through a modular backend architecture.
+Python-based log intelligence and analysis tool for importing, storing, analysing, and reporting operational application logs through a modular FastAPI backend.
 
-Pythonベースのログ解析・監視ツール。サーバーログの分析、エラー追跡、レポート生成を行うバックエンドプロジェクト。
+アプリケーションログの取り込み、保存、分析、レポート生成を行う、FastAPIベースのログインテリジェンス・分析ツールです。
 
 ## Current Status / 現在のステータス
 
-Log Intelligence Analyzer is a FastAPI backend project for importing, storing, analysing, and reporting application logs.
+LogSense is a FastAPI and PostgreSQL application for importing, storing, analysing, and reporting operational application logs.
 
 ### Completed
-- FastAPI backend routes
+- FastAPI API layer
 - PostgreSQL log storage
+- SQLAlchemy database integration
+- Log importing and persistence
+- Stored log retrieval
+- Log severity summaries
+- Error analysis and reporting
+- Live log preview endpoint
 - Docker support
-- Docker Compose setup
-- Log import route
-- Stored logs route
-- Error summary/report routes
+- Docker Compose API + PostgreSQL environment
+- Swagger API documentation
+- GitHub Actions backend CI
 
 ### Known Issue
-Running `/logs/import` multiple times can create duplicate stored log entries.
+- Repeated calls to `/logs/import` can create duplicate stored log entries.
 
-### Next Roadmap
-- Add duplicate prevention for imported logs
-- Add log hash/checksum field
-- Add severity filtering
-- Add Slack/email alerts for critical logs
-- Expand FastAPI dashboard
-- Move detailed documentation into the `docs/` directory
+### Finalisation Roadmap
+- Prevent duplicate log imports
+- Add a small read-only LogSense dashboard for log summaries and analysis
+- Complete project documentation
+- Capture final screenshots and presentation material
+- Move LogSense to maintenance
 
 ## Features / 機能
+
 | EN | 日本語 |
 | --- | --- |
 | Log severity categorisation | ログの重要度分類 |
-| INFO / WARNING / ERROR | INFO / WARNING / ERROR の検出 |
+| INFO / WARNING / ERROR detection | INFO / WARNING / ERROR の検出 |
 | Repeated error tracking | 重複エラーの追跡 |
 | Error frequency analysis | エラー発生頻度の分析 |
-| Timestamp/hour-based error analysis | タイムスタンプ・時間帯別のエラー分析 |
+| Timestamp and hour-based error analysis | タイムスタンプ・時間帯別のエラー分析 |
 | Exportable analysis reports | エクスポート可能な分析レポート |
-| Color-coded CLI output | 色分けされたCLI出力 |
-| Modular backend structure | モジュール化されたバックエンド構成 |
-| FastAPI dashboard/API layer | FastAPIダッシュボード・APIレイヤー |
+| Colour-coded CLI output | 色分けされたCLI出力 |
+| PostgreSQL log persistence | PostgreSQLへのログ保存 |
+| Log import and retrieval API | ログのインポート・取得API |
+| Live log preview endpoint | 最新ログのライブプレビュー |
+| FastAPI REST API | FastAPI REST API |
 | Swagger API documentation | Swagger APIドキュメント |
-| PostgreSQL log storage | PostgreSQLへのログ保存 |
-| Docker containerization | Dockerコンテナ |
-| Docker Compose API + PostgreSQL setup | Docker Compose APIとPostgreSQL構成 |
-| Live log preview route | 最新ログを確認するライブプレビュールート |
+| Dockerised development environment | Docker開発環境 |
+| Modular backend architecture | モジュール化されたバックエンド構成 |
 
 ## Tech Stack / 技術スタック
 
+### Backend
 - Python
 - FastAPI
 - Uvicorn
-- PostgreSQL
 - SQLAlchemy
-- Docker | Docker Compose
+
+### Database
+- PostgreSQL
+
+### Infrastructure
+- Docker
+- Docker Compose
+
+### Tooling
+- Git
+- GitHub
+- GitHub Actions CI
 - Colorama
-- Git | GitHub
-- Linux/macOS terminal
-- Modular Backend Architecture
+
+### Architecture
+- Modular service and route structure
+- REST API
+- PostgreSQL persistence
 
 ## Docker Usage / Dockerでの起動
 ### Docker Compose
@@ -85,12 +103,12 @@ docker compose down
 ## Manual Docker Usage / 手動Docker起動
 Build the API container:
 ```bash
-docker build -t log-intelligence-api .
+docker build -t logsense .
 ```
 
 Run the API container:
 ```bash
-docker run -p 8000:8000 log-intelligence-api
+docker run -p 8000:8000 logsense-api
 ```
 
 Open FastAPI Swagger docs:
@@ -125,20 +143,25 @@ curl http://127.0.0.1:8000/logs/stored
 
 View severity summary
 
-## CI/CD
+## Continuous Integration
 
-This project uses GitHub Actions to run automated checks on every push and pull request.
+LogSense uses GitHub Actions for automated backend checks on pushes and pull requests.
 
-Current pipeline:
+The current CI workflow:
 
-- Install dependencies
-- Validate Python syntax
-- Run tests when available
-- Build project or Docker image where applicable
+- Checks out the repository
+- Sets up the Python environment
+- Installs project dependencies
+- Validates the backend
+- Runs available tests
+- Builds the Docker image when a Dockerfile is present
+
+Deployment is separate from the current GitHub Actions CI workflow.
 
 ## Project Structure / プロジェクト構成
-```markdown
-log-intelligence-analyzer/
+
+```text
+logsense/
 ├── app/
 │   ├── main.py
 │   ├── database.py
@@ -148,17 +171,17 @@ log-intelligence-analyzer/
 │   │   └── log_routes.py
 │   └── services/
 │       └── log_service.py
-├── analysis_report.txt
+├── sample_logs/
+│   └── server.log
 ├── analytics.py
 ├── analyzer.py
+├── parser.py
+├── reporter.py
+├── analysis_report.txt
 ├── Dockerfile
 ├── docker-compose.yml
-├── parser.py
-├── README.md
-├── reporter.py
 ├── requirements.txt
-└── sample_logs/
-    └── server.log
+└── README.md
 ```
 
 ## Documentation
@@ -166,20 +189,21 @@ log-intelligence-analyzer/
 Detailed project documentation is available in the [`docs/`](docs/) directory.
 
 | Document | Description |
-|----------|-------------|
-| [API Examples](docs/api-examples.md) | Example requests and responses for each API endpoint. |
-| Architecture | *(Coming soon)* |
-| Development Notes | *(Coming soon)* |
+| --- | --- |
+| [API Examples](docs/api-examples.md) | Example requests for interacting with the LogSense API |
+| Architecture | Coming during finalisation |
+| Development Notes | Coming during finalisation |
 
-## Future Improvements / 今後の改善点
+## Finalisation / 最終調整
+
+LogSense is approaching feature completion. Remaining work is intentionally limited to:
 
 | EN | 日本語 |
-| --- | --- | 
-| Background live log monitioring | バックグラウンドでのライブログ監視 |
-| Slack/email alert integration | Slack・メール通知連携 |
-| Duplicate log prevention | 重複ログ登録の防止 |
-| Log search and filtering | ログ検索・フィルタリング |
-| Dashboard UI improvements | ダッシュボードUIの改善 |
-| Historical log charts | 過去ログのグラフ表示 |
-| CI/CD pipeline | CI/CDパイプライン |
-| Deployment documentation | デプロイ手順のドキュメント化 |
+| --- | --- |
+| Prevent duplicate log imports | 重複ログ登録の防止 |
+| Add a small read-only analysis dashboard | 読み取り専用の分析ダッシュボードを追加 |
+| Complete architecture and development documentation | アーキテクチャ・開発ドキュメントの完成 |
+| Capture final screenshots and presentation material | 最終スクリーンショット・紹介資料の作成 |
+| Move the project to maintenance | プロジェクトをメンテナンス段階へ移行 |
+
+Once these items are complete, further development will be limited to maintenance, dependency updates, bug fixes, and documentation improvements.
