@@ -17,7 +17,7 @@
 - [x] Dashboard opened at `http://localhost:8002/dashboard`.
 - [x] Re-importing unchanged sample logs inserted zero additional records.
 - [x] Records remained after Docker Compose containers restarted without deleting volumes.
-- [x] Final dashboard UI was reviewed and accepted.
+- [x] Final dashboard UI was completed.
 
 ## Evidence and release notes
 
@@ -27,5 +27,5 @@
 
 ## Decision
 
-The finalisation criteria were met. LogSense is in **Maintenance**.
+The finalisation criteria was met. LogSense is in **Maintenance**.
 Further ingestion, distributed storage and cloud expansion are separate **Kansoku Cloud** work.
