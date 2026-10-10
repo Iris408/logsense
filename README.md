@@ -7,9 +7,9 @@
 
 アプリケーションログを PostgreSQL に保存(ほぞん)し、FastAPI と読(よ)み取(と)り専用(せんよう)ダッシュボードで分析(ぶんせき)する、小規模(しょうきぼ)なポートフォリオプロジェクトです。
 
-## Current milestone
+## Project status
 
-**Finalisation — ready for verification.** The read-only dashboard, repeat-import protection, automated regression tests, CI improvements and documentation are included in this change set.
+**Maintenance — finalisation completed 10 October 2026.** The read-only dashboard, repeat-import protection, automated regression tests, and Docker/PostgreSQL integration checks are complete. Both Backend CI and Docker CI passed; finalisation PR #1 was merged. New work is limited to bug fixes, dependency/security updates, test reliability, and documentation. See [maintenance policy](docs/maintenance.md) and [final verification](docs/final-verification.md).
 
 ### Features
 
@@ -38,21 +38,21 @@ cp .env.example .env
 # Edit .env and set your own POSTGRES_PASSWORD
 
 docker compose up --build -d
-curl -X POST http://localhost:8000/logs/import
+curl -X POST http://localhost:8002/logs/import
 ```
 
 Open:
 
-- Dashboard: **http://localhost:8000/dashboard**
-- API docs: **http://localhost:8000/docs**
-- DB-backed analytics JSON: **http://localhost:8000/logs/dashboard-summary**
+- Dashboard: **http://localhost:8002/dashboard**
+- API docs: **http://localhost:8002/docs**
+- DB-backed analytics JSON: **http://localhost:8002/logs/dashboard-summary**
 
 ```bash
 # Repeating the same import returns imported_count: 0
-curl -X POST http://localhost:8000/logs/import
+curl -X POST http://localhost:8002/logs/import
 
 # Fetch the newest 20 ERROR records
-curl 'http://localhost:8000/logs/stored?severity=ERROR&limit=20'
+curl 'http://localhost:8002/logs/stored?severity=ERROR&limit=20'
 
 # Keep persisted volume when stopping
 docker compose down
@@ -109,7 +109,7 @@ Future distributed ingestion/ClickHouse/OpenTelemetry/AWS/Terraform work will ev
 
 ## Screenshots
 
-![LogSense dashboard preview using local test data](screenshots/logsense-dashboard-preview.png)
+![LogSense dashboard preview using local test data](screenshots/logsense-dashboard.png)
 
 ## License
 

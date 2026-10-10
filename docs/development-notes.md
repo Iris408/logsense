@@ -2,7 +2,7 @@
 
 ## Why a small dashboard?
 
-The backend already implements log importing and reporting. A small, read-only web view proves that the API can power an accessible operational interface without turning LogSense into another standalone frontend product. The frontend uses native HTML/CSS/JavaScript rather than a second deployment or framework toolchain.
+The backend already implements log importing and reporting. A small, read-only web view proves that the API can power an accessible operational interface without turning LogSense into another standalone frontend product. The frontend uses native HTML/CSS/JavaScript.
 
 ## Key decisions
 
