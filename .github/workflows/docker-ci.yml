@@ -26,17 +26,17 @@ jobs:
       - name: Verify API and dashboard
         run: |
           for i in $(seq 1 30); do
-            if curl --fail --silent http://127.0.0.1:8000/ >/dev/null; then
+            if curl --fail --silent http://127.0.0.1:8002/ >/dev/null; then
               break
             fi
             sleep 2
           done
-          curl --fail --silent --show-error http://127.0.0.1:8000/ >/dev/null
-          curl --fail --silent --show-error http://127.0.0.1:8000/dashboard >/dev/null
-          curl --fail --silent --show-error http://127.0.0.1:8000/dashboard/assets/dashboard.js >/dev/null
-          curl --fail --silent --show-error -X POST http://127.0.0.1:8000/logs/import >/dev/null
-          curl --fail --silent --show-error http://127.0.0.1:8000/logs/dashboard-summary | python -c 'import json,sys; assert json.load(sys.stdin)["total_logs"] > 0'
-          curl --fail --silent --show-error -X POST http://127.0.0.1:8000/logs/import | python -c 'import json,sys; assert json.load(sys.stdin)["imported_count"] == 0'
+          curl --fail --silent --show-error http://127.0.0.1:8002/ >/dev/null
+          curl --fail --silent --show-error http://127.0.0.1:8002/dashboard >/dev/null
+          curl --fail --silent --show-error http://127.0.0.1:8002/dashboard/assets/dashboard.js >/dev/null
+          curl --fail --silent --show-error -X POST http://127.0.0.1:8002/logs/import >/dev/null
+          curl --fail --silent --show-error http://127.0.0.1:8002/logs/dashboard-summary | python -c 'import json,sys; assert json.load(sys.stdin)["total_logs"] > 0'
+          curl --fail --silent --show-error -X POST http://127.0.0.1:8002/logs/import | python -c 'import json,sys; assert json.load(sys.stdin)["imported_count"] == 0'
 
       - name: Docker logs (on failure)
         if: failure()
