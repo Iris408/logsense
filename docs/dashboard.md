@@ -16,8 +16,8 @@ No React build or external charting library is needed. Assets ship under `app/da
 ## Local use
 
 1. Create your `.env` by copying `.env.example`, change the password, and run `docker compose up --build -d`.
-2. Open http://localhost:8000/dashboard.
-3. Initially the dashboard may be empty. Run `curl -X POST http://localhost:8000/logs/import`.
+2. Open http://localhost:8002/dashboard.
+3. Initially the dashboard may be empty. Run `curl -X POST http://localhost:8002/logs/import`.
 4. Use **Refresh data**; search/filter the recent log table.
 5. Confirm that a second import returns `imported_count: 0` and a nonzero `skipped_count`.
 
@@ -25,4 +25,4 @@ Note: `/logs/summary` reads the sample file and **does not** represent imported 
 
 ## Evidence
 
-The bundled preview screenshot (`screenshots/logsense-dashboard-preview.png`) was rendered from a local SQLite test API response. After running the Docker/PostgreSQL verification, capture a final working screenshot at `screenshots/logsense-dashboard.png` and ensure it corresponds to a running, populated dashboard. A local SQLite-backed screenshot is suitable for showing UI layout, but the Docker/PostgreSQL flow should be verified separately for the portfolio's deployment claim.
+The bundled preview screenshot (`screenshots/logsense-dashboard-preview.png`) was rendered from a local SQLite test API response. After running the Docker/PostgreSQL verification, a final working screenshot was captured at `screenshots/logsense-dashboard.png`.
