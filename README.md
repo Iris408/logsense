@@ -3,207 +3,114 @@
 
 # LogSense / ログセンス
 
-Python-based log intelligence and analysis tool for importing, storing, analysing, and reporting operational application logs through a modular FastAPI backend.
+**A focused log intelligence and analysis portfolio project.** LogSense imports plain-text application logs into PostgreSQL, exposes analytics with FastAPI, and provides a small read-only dashboard for the latest error patterns and stored records.
 
-アプリケーションログの取り込み、保存、分析、レポート生成を行う、FastAPIベースのログインテリジェンス・分析ツールです。
+アプリケーションログを PostgreSQL に保存(ほぞん)し、FastAPI と読(よ)み取(と)り専用(せんよう)ダッシュボードで分析(ぶんせき)する、小規模(しょうきぼ)なポートフォリオプロジェクトです。
 
-## Current Status / 現在のステータス
+## Current milestone
 
-LogSense is a FastAPI and PostgreSQL application for importing, storing, analysing, and reporting operational application logs.
+**Finalisation — ready for verification.** The read-only dashboard, repeat-import protection, automated regression tests, CI improvements and documentation are included in this change set.
 
-### Completed
-- FastAPI API layer
-- PostgreSQL log storage
-- SQLAlchemy database integration
-- Log importing and persistence
-- Stored log retrieval
-- Log severity summaries
-- Error analysis and reporting
-- Live log preview endpoint
-- Docker support
-- Docker Compose API + PostgreSQL environment
-- Swagger API documentation
-- GitHub Actions backend CI
+### Features
 
-### Known Issue
-- Repeated calls to `/logs/import` can create duplicate stored log entries.
+- Import one local log file into PostgreSQL with SQLAlchemy.
+- Sequential repeat-import protection that preserves genuine repeated events.
+- Database-backed severity distribution, top error messages, and last seven days of errors by **UTC import date**.
+- FastAPI routes for sample-file analytics, stored logs, and reporting.
+- Read-only browser dashboard with recent log search and severity filtering.
+- Docker Compose environment with persistent PostgreSQL storage.
+- Backend tests (isolated SQLite) and Docker Compose smoke verification in GitHub Actions.
 
-### Finalisation Roadmap
-- Prevent duplicate log imports
-- Add a small read-only LogSense dashboard for log summaries and analysis
-- Complete project documentation
-- Capture final screenshots and presentation material
-- Move LogSense to maintenance
+## Technology stack
 
-## Features / 機能
-
-| EN | 日本語 |
+| Layer | Technology |
 | --- | --- |
-| Log severity categorisation | ログの重要度分類 |
-| INFO / WARNING / ERROR detection | INFO / WARNING / ERROR の検出 |
-| Repeated error tracking | 重複エラーの追跡 |
-| Error frequency analysis | エラー発生頻度の分析 |
-| Timestamp and hour-based error analysis | タイムスタンプ・時間帯別のエラー分析 |
-| Exportable analysis reports | エクスポート可能な分析レポート |
-| Colour-coded CLI output | 色分けされたCLI出力 |
-| PostgreSQL log persistence | PostgreSQLへのログ保存 |
-| Log import and retrieval API | ログのインポート・取得API |
-| Live log preview endpoint | 最新ログのライブプレビュー |
-| FastAPI REST API | FastAPI REST API |
-| Swagger API documentation | Swagger APIドキュメント |
-| Dockerised development environment | Docker開発環境 |
-| Modular backend architecture | モジュール化されたバックエンド構成 |
+| Backend | Python, FastAPI, SQLAlchemy |
+| Database | PostgreSQL 16 (Docker), SQLite (tests) |
+| Frontend | Native HTML, CSS, JavaScript |
+| Container runtime | Docker and Docker Compose |
+| CI | GitHub Actions, pytest, HTTP smoke tests |
 
-## Tech Stack / 技術スタック
+## Quick start (local Docker)
 
-### Backend
-- Python
-- FastAPI
-- Uvicorn
-- SQLAlchemy
-
-### Database
-- PostgreSQL
-
-### Infrastructure
-- Docker
-- Docker Compose
-
-### Tooling
-- Git
-- GitHub
-- GitHub Actions CI
-- Colorama
-
-### Architecture
-- Modular service and route structure
-- REST API
-- PostgreSQL persistence
-
-## Docker Usage / Dockerでの起動
-### Docker Compose
-
-Start the FastAPI backend and Postgresql database:
 ```bash
-docker compose up --build
+cp .env.example .env
+# Edit .env and set your own POSTGRES_PASSWORD
+
+docker compose up --build -d
+curl -X POST http://localhost:8000/logs/import
 ```
-Run in the background:
+
+Open:
+
+- Dashboard: **http://localhost:8000/dashboard**
+- API docs: **http://localhost:8000/docs**
+- DB-backed analytics JSON: **http://localhost:8000/logs/dashboard-summary**
+
 ```bash
-docker compose up -d
-```
-View container logs:
-```bash
-docker compose logs
-```
-Stop the container:
-```bash
+# Repeating the same import returns imported_count: 0
+curl -X POST http://localhost:8000/logs/import
+
+# Fetch the newest 20 ERROR records
+curl 'http://localhost:8000/logs/stored?severity=ERROR&limit=20'
+
+# Keep persisted volume when stopping
 docker compose down
 ```
 
-## Manual Docker Usage / 手動Docker起動
-Build the API container:
+The dashboard shows imported **database** records; `/logs/summary` and `/logs/live` still read the sample file directly. Source records lack real event timestamps, so the dashboard labels dates as UTC **import time**.
+
+## Automated verification
+
+Install the existing app requirements plus testing dependencies, then run:
+
 ```bash
-docker build -t logsense .
+python -m pip install -r requirements.txt -r requirements-dev.txt
+python -m pytest -q
 ```
 
-Run the API container:
-```bash
-docker run -p 8000:8000 logsense-api
-```
+The backend workflow runs actual tests rather than silently skipping them. Docker CI builds and starts the API + PostgreSQL stack, checks the dashboard and API, and verifies repeated imports.
 
-Open FastAPI Swagger docs:
-```text
-http://127.0.0.1:8000/docs
-```
+## API reference
 
-## API Endpoints
-
-| Method | Endpoint | Description |
+| Method | Path | Purpose |
 | --- | --- | --- |
-| GET | / | API health/status route |
-| GET | /logs/summary | Returns log severity summary |
-| GET | /logs/errors | Returns error log entries |
-| GET | /logs/report | Returns generated analysis report |
-| POST | /logs/import | Imports log entries into PostgreSQL |
-| GET | /logs/stored | Returns stored log entries from PostgreSQL |
-| GET | /logs/live | Returns the latest log entries from the log file |
-| DELETE | /logs/stored | Clears stored log entries from PostgreSQL |
+| GET | `/` | API root |
+| GET | `/dashboard` | Read-only browser UI |
+| GET | `/logs/dashboard-summary` | Aggregate stored records |
+| GET | `/logs/stored?limit=100&severity=ERROR` | Stored logs with optional filter and bounded limit |
+| POST | `/logs/import` | Import configured sample file |
+| GET | `/logs/summary` | Sample-file severity summary |
+| GET | `/logs/errors` | Sample-file errors |
+| GET | `/logs/report` | Generated local report text |
+| GET | `/logs/live` | Latest sample-file records |
+| DELETE | `/logs/stored` | Clear stored records (development only) |
 
-## API Examples / API使用例
-
-Import logs:
-```bash
-curl -X POST http://127.0.0.1:8000/logs/import
-```
-
-View stored logs:
-```bash
-curl http://127.0.0.1:8000/logs/stored
-```
-
-View severity summary
-
-## Continuous Integration
-
-LogSense uses GitHub Actions for automated backend checks on pushes and pull requests.
-
-The current CI workflow:
-
-- Checks out the repository
-- Sets up the Python environment
-- Installs project dependencies
-- Validates the backend
-- Runs available tests
-- Builds the Docker image when a Dockerfile is present
-
-Deployment is separate from the current GitHub Actions CI workflow.
-
-## Project Structure / プロジェクト構成
+## Architecture
 
 ```text
-logsense/
-├── app/
-│   ├── main.py
-│   ├── database.py
-│   ├── models/
-│   │   └── log_model.py
-│   ├── routes/
-│   │   └── log_routes.py
-│   └── services/
-│       └── log_service.py
-├── sample_logs/
-│   └── server.log
-├── analytics.py
-├── analyzer.py
-├── parser.py
-├── reporter.py
-├── analysis_report.txt
-├── Dockerfile
-├── docker-compose.yml
-├── requirements.txt
-└── README.md
+sample_logs/server.log
+         |
+         v
+   POST /logs/import --> FastAPI --> SQLAlchemy --> PostgreSQL
+                                |                   |
+                                |       GET summary / records
+                                v                   |
+                         /dashboard <---------------+
 ```
 
-## Documentation
+For more context see [architecture](docs/architecture.md), [dashboard](docs/dashboard.md), [development notes](docs/development-notes.md), [API examples](docs/api-examples.md), and the [final verification checklist](docs/final-verification.md).
 
-Detailed project documentation is available in the [`docs/`](docs/) directory.
+## Limitations / future Kansoku Cloud work
 
-| Document | Description |
-| --- | --- |
-| [API Examples](docs/api-examples.md) | Example requests for interacting with the LogSense API |
-| Architecture | Coming during finalisation |
-| Development Notes | Coming during finalisation |
+LogSense is a **single-file, trusted-local portfolio demo**, not production-grade ingestion. Concurrent imports, log rotation, true event timestamps, cloud deployment, auth, multi-tenancy, backup and recovery are not included. Never expose the existing import/delete API publicly without authentication and access controls. Container persistence is not a database backup.
 
-## Finalisation / 最終調整
+Future distributed ingestion/ClickHouse/OpenTelemetry/AWS/Terraform work will evolve separately under **Kansoku Cloud**.
 
-LogSense is approaching feature completion. Remaining work is intentionally limited to:
+## Screenshots
 
-| EN | 日本語 |
-| --- | --- |
-| Prevent duplicate log imports | 重複ログ登録の防止 |
-| Add a small read-only analysis dashboard | 読み取り専用の分析ダッシュボードを追加 |
-| Complete architecture and development documentation | アーキテクチャ・開発ドキュメントの完成 |
-| Capture final screenshots and presentation material | 最終スクリーンショット・紹介資料の作成 |
-| Move the project to maintenance | プロジェクトをメンテナンス段階へ移行 |
+![LogSense dashboard preview using local test data](screenshots/logsense-dashboard-preview.png)
 
-Once these items are complete, further development will be limited to maintenance, dependency updates, bug fixes, and documentation improvements.
+## License
+
+See [LICENSE](LICENSE).
