@@ -11,7 +11,6 @@ on:
 jobs:
   backend-checks:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -24,16 +23,15 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+          pip install -r requirements.txt -r requirements-dev.txt
 
       - name: Check Python syntax
         run: |
-          python -m compileall .
+          python -m compileall -q app analytics.py analyzer.py parser.py reporter.py tests
 
-      - name: Run tests if available
+      - name: Run regression tests
         run: |
-          if [ -d tests ]; then pytest; else echo "No tests folder found"; fi
+          python -m pytest -q
 
-      - name: Build Docker image if Dockerfile exists
-        run: |
-          if [ -f Dockerfile ]; then docker build -t logsense .; else echo "No Dockerfile found"; fi
+      - name: Build Docker image
+        run: docker build -t logsense .

@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f7fa">
+  <meta name="description" content="LogSense read-only operational log analysis dashboard.">
+  <title>LogSense — Operations Overview</title>
+  <link rel="stylesheet" href="/dashboard/assets/dashboard.css">
+  <script defer src="/dashboard/assets/dashboard.js"></script>
+</head>
+<body>
+  <div class="shell">
+    <aside class="sidebar" aria-label="Dashboard navigation">
+      <a class="brand" href="/dashboard" aria-label="LogSense dashboard home">
+        <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span>
+        <span>LogSense<small>LOG INTELLIGENCE</small></span>
+      </a>
+      <p class="nav-label">WORKSPACE</p>
+      <nav>
+        <a class="nav-link active" href="#overview"><span class="nav-icon" aria-hidden="true">◫</span> Overview</a>
+        <a class="nav-link" href="#activity"><span class="nav-icon" aria-hidden="true">≡</span> Log records</a>
+      </nav>
+      <div class="sidebar-bottom"><span class="online-dot"></span> Local demonstration<br><small>Read-only analytics interface</small></div>
+    </aside>
+
+    <main id="overview" class="main">
+      <header class="topbar">
+        <div class="breadcrumb">Workspace <span>/</span> <strong>Overview</strong></div>
+        <div class="top-actions"><span class="readonly"><span class="online-dot"></span> Read only</span><a class="api-link" href="/docs">API documentation ↗</a></div>
+      </header>
+
+      <div class="content">
+        <div class="hero-row">
+          <div>
+            <p class="eyebrow">OPERATIONS / ANALYTICS</p>
+            <h1>Logs, with context.</h1>
+            <p class="intro">A focused overview of imported application logs, error patterns and recent activity.</p>
+          </div>
+          <button id="refresh" class="button" type="button"><span aria-hidden="true">↻</span> Refresh data</button>
+        </div>
+        <div id="fetch-status" class="status" role="status" aria-live="polite">Loading stored log data…</div>
+
+        <section class="stats" aria-label="Log counts">
+          <article class="metric"><p>Total log records</p><strong id="total-logs">—</strong><small>Stored in database</small></article>
+          <article class="metric"><p>Error events</p><strong id="error-count">—</strong><small><span class="small-dot error"></span> Severity: ERROR</small></article>
+          <article class="metric"><p>Warnings</p><strong id="warning-count">—</strong><small><span class="small-dot warning"></span> Severity: WARNING</small></article>
+          <article class="metric"><p>Information</p><strong id="info-count">—</strong><small><span class="small-dot info"></span> Severity: INFO</small></article>
+        </section>
+
+        <section class="analytics-grid" aria-label="Log analysis">
+          <article class="panel">
+            <div class="panel-heading"><div><p class="section-label">BREAKDOWN</p><h2>Severity distribution</h2></div><span class="panel-tag">All imported logs</span></div>
+            <div class="segmented" id="severity-segment" aria-hidden="true"></div>
+            <div id="severity-bars" class="bars" aria-label="Logs by severity"></div>
+          </article>
+          <article class="panel">
+            <div class="panel-heading"><div><p class="section-label">TRENDS</p><h2>Errors over time</h2></div><span class="panel-tag">Last 7 days</span></div>
+            <div class="chart-description">Counted by import date (not original event timestamp).</div>
+            <div id="error-chart" class="error-chart" aria-label="Errors by import date"></div>
+          </article>
+        </section>
+
+        <section class="bottom-grid">
+          <article class="panel" aria-labelledby="errors-title">
+            <div class="panel-heading"><div><p class="section-label">PATTERNS</p><h2 id="errors-title">Most repeated errors</h2></div><span class="panel-tag">Top 5</span></div>
+            <ol id="top-errors" class="error-list"><li class="muted">Loading…</li></ol>
+          </article>
+          <article class="panel notes-panel">
+            <p class="section-label">ABOUT THIS VIEW</p>
+            <h2>Purposefully small.</h2>
+            <p>LogSense imports a local sample log into PostgreSQL and exposes a read-only analysis surface through FastAPI.</p>
+            <p>To import records locally, run:</p>
+            <code>curl -X POST http://localhost:8000/logs/import</code>
+            <p class="last-sync">Last imported: <strong id="last-import">Not yet imported</strong></p>
+          </article>
+        </section>
+
+        <section id="activity" class="panel records-panel" aria-labelledby="records-title">
+          <div class="records-header">
+            <div><p class="section-label">ACTIVITY</p><h2 id="records-title">Recent log records</h2><p class="records-help">Latest 100 imported records. Search and filter this view locally.</p></div>
+            <div class="filters"><label class="sr-only" for="search">Search log messages</label><input id="search" type="search" placeholder="Search messages" autocomplete="off"><label class="sr-only" for="severity-filter">Filter by severity</label><select id="severity-filter"><option value="ALL">All severities</option><option value="ERROR">Errors</option><option value="WARNING">Warnings</option><option value="INFO">Information</option><option value="UNKNOWN">Unknown</option></select></div>
+          </div>
+          <div class="table-scroll"><table><thead><tr><th scope="col">SEVERITY</th><th scope="col">IMPORTED AT (UTC)</th><th scope="col">MESSAGE</th></tr></thead><tbody id="log-rows"><tr><td colspan="3" class="muted">Loading…</td></tr></tbody></table></div>
+          <p id="records-count" class="record-count" aria-live="polite"></p>
+        </section>
+        <footer>LogSense <span>·</span> Read-only portfolio demonstration <span>·</span> <a href="/docs">FastAPI docs</a></footer>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

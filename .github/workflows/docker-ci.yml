@@ -11,18 +11,37 @@ on:
 jobs:
   docker-checks:
     runs-on: ubuntu-latest
+    env:
+      POSTGRES_USER: log_user
+      POSTGRES_PASSWORD: ci-local-only-password
+      POSTGRES_DB: log_analyzer_db
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4.2.2
+        uses: actions/checkout@v4
 
-      - name: Build Docker Compose services
+      - name: Start full Docker Compose stack
+        run: docker compose up -d --build
+
+      - name: Verify API and dashboard
         run: |
-          if [ -f docker-compose.yml ]; then
-            docker compose build
-          elif [ -f compose.yml ]; then
-            docker compose -f compose.yml build
-          else
-            echo "No Docker Compose file found"
-            exit 1
-          fi
+          for i in $(seq 1 30); do
+            if curl --fail --silent http://127.0.0.1:8000/ >/dev/null; then
+              break
+            fi
+            sleep 2
+          done
+          curl --fail --silent --show-error http://127.0.0.1:8000/ >/dev/null
+          curl --fail --silent --show-error http://127.0.0.1:8000/dashboard >/dev/null
+          curl --fail --silent --show-error http://127.0.0.1:8000/dashboard/assets/dashboard.js >/dev/null
+          curl --fail --silent --show-error -X POST http://127.0.0.1:8000/logs/import >/dev/null
+          curl --fail --silent --show-error http://127.0.0.1:8000/logs/dashboard-summary | python -c 'import json,sys; assert json.load(sys.stdin)["total_logs"] > 0'
+          curl --fail --silent --show-error -X POST http://127.0.0.1:8000/logs/import | python -c 'import json,sys; assert json.load(sys.stdin)["imported_count"] == 0'
+
+      - name: Docker logs (on failure)
+        if: failure()
+        run: docker compose logs --no-color
+
+      - name: Stop services and clean CI volume
+        if: always()
+        run: docker compose down -v
